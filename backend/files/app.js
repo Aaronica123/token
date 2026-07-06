@@ -6,6 +6,8 @@ import pgSession from "connect-pg-simple";
 import red from "./file.js";
 import token from "./trial/token.js";
 import execute from "./trial/scrpt.js";
+import { create } from "./models/user.js";
+import {login }from "./models/user.js";
 const app=express();
 const pg=new Client({
     user:"postgres",
@@ -33,5 +35,7 @@ app.use(express.json());
 app.post("/th",red);
 app.post("/exec",execute);
 app.post("/token",token);
+app.post("/create",create);
+app.post("/login",login);
 
 export default app;
