@@ -57,48 +57,49 @@ export async function login(req,res){
         if(!user_id||!password){
             return res.status(400).json({"message":"Enter all fields"})
         }
-        const c=await cr.query(`select password,role,user_name from rate_user where user_id = $1`,[user_id]);
-        // console.log(c);
+        if(!tr_c){
+            tr_c=await cr.connect();
+
+        }
+        const c=await cr.query(`select * from rate_user where user_id = $1;`,[user_id]);
+        ;
+        console.log(c);
         if(c.rows.length>0){
             // console.log(c);
             const y=c.rows[0].password;
             console.log(y);
-            // await bcrypt.compare(password,y).then(()=>{
-            //     console.log("success")
-            // }).catch((error)=>{
-            //     console.log(error)
-            //      return res.status(409).json({"message":"Failed to verify"})
-            // });
+            
 
-            const b=await bcrypt.compare(password,y);
+            const b=bcrypt.compare(password,y);
             if(b){
                 console.log("verified");
-                return res.status(200).json({"message":"verified"})
+                // return res.status(200).json({"message":"verified"})
             }
             else{
                 return res.status(500).json({'message':"Unverified"})
             }
-            // req.session.user={
-            //     token:10,
-            //     role:c.role,
-            //     user_name:c.user_name
-            // }
-            // new Promise((resolve,reject)=>{
-            //     req.session.save((error)=>{
-            //         if(error){
-            //             console.log(error)
-            //             reject(error);
-            //         }
-            //         else{
-            //             resolve();
-            //         }
-            //     })
-            // }).then(()=>{
-            //     return res.status(201).json({"message":"User saved"})
-            // }).catch((error)=>{
-            //     console.log(error);
-            //     return res.status(500).json({"message":"failed to save"})
-            // })
+            const d1=c.rows[0].role;const d2=c.rows[0].user_name;
+            req.session.user={
+                token:10,
+                role:d1,
+                user_name:d2
+            }
+            new Promise((resolve,reject)=>{
+                req.session.save((error)=>{
+                    if(error){
+                        console.log(error)
+                        reject(error);
+                    }
+                    else{
+                        resolve();
+                    }
+                })
+            }).then(()=>{
+                return res.status(201).json({"message":"User saved"})
+            }).catch((error)=>{
+                console.log(error);
+                return res.status(500).json({"message":"failed to save"})
+            })
         }
         else{
             return res.status(404).json({"message":"user not found"})
