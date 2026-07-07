@@ -8,6 +8,8 @@ import token from "./trial/token.js";
 import execute from "./trial/scrpt.js";
 import { create } from "./models/user.js";
 import {login }from "./models/user.js";
+import handle from "./models/token_md.js";
+
 const app=express();
 const pg=new Client({
     user:"postgres",
@@ -37,5 +39,6 @@ app.post("/exec",execute);
 app.post("/token",token);
 app.post("/create",create);
 app.post("/login",login);
+app.post("/token_tr",handle);
 
 export default app;

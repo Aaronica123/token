@@ -79,11 +79,35 @@ export async function login(req,res){
                 return res.status(500).json({'message':"Unverified"})
             }
             const d1=c.rows[0].role;const d2=c.rows[0].user_name;
-            req.session.user={
-                token:10,
+            if(d1=="admin"){
+                req.session.user={
+                token:25,
+                max_token:25,
                 role:d1,
-                user_name:d2
+                user_name:d2,
+                user_id:user_id
             }
+            }
+            if(d1=="staff"){
+                req.session.user={
+                token:15,
+                max_token:15,
+                role:d1,
+                user_name:d2,
+                user_id:user_id
+            }
+            }
+            if(d1=="director"){
+                req.session.user={
+                token:30,
+                max_token:30,
+                role:d1,
+                user_name:d2,
+                user_id:user_id
+            }
+            }
+
+            
             new Promise((resolve,reject)=>{
                 req.session.save((error)=>{
                     if(error){
